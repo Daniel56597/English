@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Mini Duolingo</title>
+<style>
+body {
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 15px;
+  width: 350px;
+  text-align: center;
+}
+button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+}
+button:hover {
+  background: #2563eb;
+}
+.correct { background: green !important; }
+.wrong { background: red !important; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2 id="question">Загрузка...</h2>
+  <div id="answers"></div>
+  <p id="score">Score: 0</p>
+</div>
+
+<script>
+const words = [
+  {q: "appropriate", a: "подходящий"},
+  {q: "avoid", a: "избегать"},
+  {q: "behave", a: "вести себя"},
+  {q: "calm", a: "спокойный"},
+  {q: "concern", a: "беспокойство"},
+  {q: "content", a: "довольный"},
+  {q: "expect", a: "ожидать"},
+  {q: "frequently", a: "часто"},
+  {q: "habit", a: "привычка"},
+  {q: "instruct", a: "инструктировать"},
+  {q: "issue", a: "проблема"},
+  {q: "none", a: "ничто"},
+  {q: "patient", a: "терпеливый"},
+  {q: "positive", a: "положительный"},
+  {q: "punish", a: "наказывать"},
+  {q: "represent", a: "представлять"},
+  {q: "shake", a: "трясти"},
+  {q: "spread", a: "распространять"},
+  {q: "stroll", a: "прогуливаться"},
+  {q: "village", a: "деревня"}
+];
+
+let current;
+let score = 0;
+
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function loadQuestion() {
+  current = words[Math.floor(Math.random() * words.length)];
+  document.getElementById("question").innerText = current.q;
+
+  let answers = [current.a];
+
+  while (answers.length < 4) {
+    let rand = words[Math.floor(Math.random() * words.length)].a;
+    if (!answers.includes(rand)) answers.push(rand);
+  }
+
+  answers = shuffle(answers);
+
+  const container = document.getElementById("answers");
+  container.innerHTML = "";
+
+  answers.forEach(ans => {
+    const btn = document.createElement("button");
+    btn.innerText = ans;
+    btn.onclick = () => checkAnswer(btn, ans);
+    container.appendChild(btn);
+  });
+}
+
+function checkAnswer(button, answer) {
+  const buttons = document.querySelectorAll("button");
+  buttons.forEach(b => b.disabled = true);
+
+  if (answer === current.a) {
+    button.classList.add("correct");
+    score++;
+  } else {
+    button.classList.add("wrong");
+    buttons.forEach(b => {
+      if (b.innerText === current.a) b.classList.add("correct");
+    });
+  }
+
+  document.getElementById("score").innerText = "Score: " + score;
+
+  setTimeout(loadQuestion, 1000);
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
